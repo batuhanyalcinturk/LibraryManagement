@@ -18,6 +18,8 @@ import Helper.*;
 import java.awt.Color;
 import javax.swing.JLabel;
 import java.awt.Font;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.border.BevelBorder;
 import javax.swing.JScrollPane;
@@ -29,11 +31,12 @@ import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
+import javax.swing.JComboBox;
 
 public class PrimeAdminGUI extends JFrame {
 
 	static PrimeAdmin primeadmin = new PrimeAdmin();
-	
+
 	private JPanel w_pane;
 	private JTable table_admin;
 	private DefaultTableModel adminModel = null;
@@ -94,23 +97,25 @@ public class PrimeAdminGUI extends JFrame {
 		}
 
 		memberModel = new DefaultTableModel();
-		Object[] colMembName = new Object[5];
+		Object[] colMembName = new Object[6];
 		colMembName[0] = "ID";
 		colMembName[1] = "Ad";
 		colMembName[2] = "Soyad";
 		colMembName[3] = "TC No";
 		colMembName[4] = "Þifre";
-		memberModel.setColumnIdentifiers(colAdmName);
-		memberData = new Object[5];
+		colMembName[5] = "Üyelik Türü";
+		memberModel.setColumnIdentifiers(colMembName);
+		memberData = new Object[6];
 		for (int i = 0; i < primeadmin.getMemberList().size(); i++) {
 			memberData[0] = primeadmin.getMemberList().get(i).getId();
 			memberData[1] = primeadmin.getMemberList().get(i).getName();
 			memberData[2] = primeadmin.getMemberList().get(i).getSurname();
 			memberData[3] = primeadmin.getMemberList().get(i).getTcno();
 			memberData[4] = primeadmin.getMemberList().get(i).getPassword();
+			memberData[5] = primeadmin.getMemberList().get(i).getType();
 			memberModel.addRow(memberData);
 		}
-		
+
 		bookModel = new DefaultTableModel();
 		Object[] colBookName = new Object[5];
 		colBookName[0] = "ID";
@@ -347,21 +352,23 @@ public class PrimeAdminGUI extends JFrame {
 			}
 
 		});
-		
+
 		table_member.getModel().addTableModelListener(new TableModelListener() {
 
 			@Override
 			public void tableChanged(TableModelEvent e) {
 				if (e.getType() == TableModelEvent.UPDATE) {
-					int selectID = Integer.parseInt(table_member.getValueAt(table_member.getSelectedRow(), 0).toString());
+					int selectID = Integer
+							.parseInt(table_member.getValueAt(table_member.getSelectedRow(), 0).toString());
 					String selectName = table_member.getValueAt(table_member.getSelectedRow(), 1).toString();
 					String selectSurname = table_member.getValueAt(table_member.getSelectedRow(), 2).toString();
 					String selectTcno = table_member.getValueAt(table_member.getSelectedRow(), 3).toString();
 					String selectPass = table_member.getValueAt(table_member.getSelectedRow(), 4).toString();
+					String selectType = table_member.getValueAt(table_member.getSelectedRow(), 5).toString();
 
 					try {
 						boolean control = primeadmin.updMember(selectID, selectTcno, selectPass, selectName,
-								selectSurname);
+								selectSurname, selectType);
 						if (control) {
 							Helper.showMsg("success");
 						}
@@ -373,19 +380,19 @@ public class PrimeAdminGUI extends JFrame {
 
 			}
 		});
-		
+
 		fld_memberID = new JTextField();
 		fld_memberID.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		fld_memberID.setEditable(false);
 		fld_memberID.setColumns(10);
 		fld_memberID.setBounds(869, 344, 149, 30);
 		member_tab.add(fld_memberID);
-		
+
 		Label lbl_membID = new Label("ID:");
 		lbl_membID.setFont(new Font("SansSerif", Font.PLAIN, 15));
 		lbl_membID.setBounds(818, 344, 45, 30);
 		member_tab.add(lbl_membID);
-		
+
 		JButton btn_delMember = new JButton("Sil");
 		btn_delMember.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -399,7 +406,7 @@ public class PrimeAdminGUI extends JFrame {
 							if (control) {
 								Helper.showMsg("success");
 								fld_memberID.setText(null);
-								updateAdminModel();
+								updateMemberModel();
 							}
 						} catch (SQLException e1) {
 							// TODO Auto-generated catch block
@@ -415,15 +422,15 @@ public class PrimeAdminGUI extends JFrame {
 		btn_delMember.setBackground(Color.LIGHT_GRAY);
 		btn_delMember.setBounds(869, 384, 149, 40);
 		member_tab.add(btn_delMember);
-		
+
 		JPanel book_tab = new JPanel();
 		w_tab.addTab("Kitap Yönetimi", null, book_tab, null);
 		book_tab.setLayout(null);
-		
+
 		JScrollPane w_scrollBook = new JScrollPane();
 		w_scrollBook.setBounds(0, 0, 847, 427);
 		book_tab.add(w_scrollBook);
-		
+
 		table_book = new JTable(bookModel);
 		w_scrollBook.setViewportView(table_book);
 		table_book.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -431,13 +438,13 @@ public class PrimeAdminGUI extends JFrame {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				try {
-					fld_bookID.setText(table_book.getValueAt(table_book.getSelectedRow(), 0).toString());
+					fld_bookID.setText(table_book.getValueAt(table_book.getSelectedRow(), 1).toString());
 				} catch (Exception ex) {
 				}
 			}
 
 		});
-		
+
 		table_book.getModel().addTableModelListener(new TableModelListener() {
 
 			@Override
@@ -455,7 +462,7 @@ public class PrimeAdminGUI extends JFrame {
 						if (control) {
 							updateBookModel();
 							Helper.showMsg("success");
-							
+
 						}
 					} catch (SQLException ex) {
 						ex.printStackTrace();
@@ -465,7 +472,7 @@ public class PrimeAdminGUI extends JFrame {
 
 			}
 		});
-		
+
 		JButton btn_delBook = new JButton("Kitabý Sil");
 		btn_delBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -488,39 +495,37 @@ public class PrimeAdminGUI extends JFrame {
 					}
 				}
 			}
-			
+
 		});
 		btn_delBook.setFont(new Font("SansSerif", Font.PLAIN, 15));
 		btn_delBook.setBounds(869, 387, 149, 40);
 		book_tab.add(btn_delBook);
-		
+
 		fld_bookID = new JTextField();
 		fld_bookID.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		fld_bookID.setEditable(false);
 		fld_bookID.setColumns(10);
 		fld_bookID.setBounds(869, 333, 149, 30);
 		book_tab.add(fld_bookID);
-		
+
 		Label lbl_bookID = new Label("ID:");
 		lbl_bookID.setFont(new Font("SansSerif", Font.PLAIN, 15));
 		lbl_bookID.setBounds(869, 296, 40, 30);
 		book_tab.add(lbl_bookID);
-		
+
 		JButton btn_addBook = new JButton("Kitap Ekle");
 		btn_addBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				AddBookGUI abGUI = new AddBookGUI();
 				abGUI.setVisible(true);
-				
 			}
 		});
 		btn_addBook.setFont(new Font("SansSerif", Font.PLAIN, 15));
 		btn_addBook.setBounds(869, 10, 149, 40);
 		book_tab.add(btn_addBook);
-		
 
 		JLabel lbl_WelcomePrimeAdmin = new JLabel("Hosgeldiniz Sayýn " + primeadmin.getName());
-		lbl_WelcomePrimeAdmin.setBounds(10, 20, 500, 20);
+		lbl_WelcomePrimeAdmin.setBounds(144, 20, 366, 20);
 		lbl_WelcomePrimeAdmin.setFont(new Font("SansSerif", Font.PLAIN, 15));
 		contentPane_1.add(lbl_WelcomePrimeAdmin);
 
@@ -538,6 +543,11 @@ public class PrimeAdminGUI extends JFrame {
 		btn_Exit.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btn_Exit.setBackground(Color.CYAN);
 		contentPane_1.add(btn_Exit);
+		
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setIcon(new ImageIcon(PrimeAdminGUI.class.getResource("/Images/admin.png")));
+		lblNewLabel.setBounds(10, 10, 64, 64);
+		contentPane_1.add(lblNewLabel);
 	}
 
 	public void updateAdminModel() throws SQLException {
@@ -552,7 +562,21 @@ public class PrimeAdminGUI extends JFrame {
 			adminModel.addRow(adminData);
 		}
 	}
-	
+
+	public void updateMemberModel() throws SQLException {
+		DefaultTableModel clearModel = (DefaultTableModel) table_member.getModel();
+		clearModel.setRowCount(0);
+		for (int i = 0; i < primeadmin.getMemberList().size(); i++) {
+			memberData[0] = primeadmin.getMemberList().get(i).getId();
+			memberData[1] = primeadmin.getMemberList().get(i).getName();
+			memberData[2] = primeadmin.getMemberList().get(i).getSurname();
+			memberData[3] = primeadmin.getMemberList().get(i).getTcno();
+			memberData[4] = primeadmin.getMemberList().get(i).getPassword();
+			memberData[5] = primeadmin.getMemberList().get(i).getType();
+			memberModel.addRow(memberData);
+		}
+	}
+
 	public void updateBookModel() throws SQLException {
 		DefaultTableModel clearModel = (DefaultTableModel) table_book.getModel();
 		clearModel.setRowCount(0);

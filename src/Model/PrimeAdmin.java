@@ -115,7 +115,7 @@ public class PrimeAdmin extends User {
 
 		try {
 			st = con.createStatement();
-			rs = st.executeQuery("SELECT * FROM register WHERE type = 'member' || 'primemember'");
+			rs = st.executeQuery("SELECT * FROM register");
 			while (rs.next()) {
 				obj = new User(rs.getInt("id"), rs.getString("tcno"), rs.getString("password"), rs.getString("name"),
 						rs.getString("surname"), rs.getString("type"));
@@ -149,8 +149,8 @@ public class PrimeAdmin extends User {
 
 	}
 
-	public boolean updMember(int id, String tcno, String password, String name, String surname) throws SQLException {
-		String query = "UPDATE register SET name = ?, surname = ?, tcno = ?, password = ? WHERE id = ?";
+	public boolean updMember(int id, String tcno, String password, String name, String surname, String type) throws SQLException {
+		String query = "UPDATE register SET name = ?, surname = ?, tcno = ?, password = ?, type = ? WHERE id = ?";
 		boolean key = false;
 		try {
 			st = con.createStatement();
@@ -159,7 +159,8 @@ public class PrimeAdmin extends User {
 			preparedStatement.setString(2, surname);
 			preparedStatement.setString(3, tcno);
 			preparedStatement.setString(4, password);
-			preparedStatement.setInt(5, id);
+			preparedStatement.setString(5, type);
+			preparedStatement.setInt(6, id);
 			preparedStatement.executeUpdate();
 			key = true;
 		} catch (Exception e) {
@@ -192,6 +193,7 @@ public class PrimeAdmin extends User {
 		return list;
 
 	}
+
 	public boolean addBook(String name, String page, String writer, String category) throws SQLException {
 		String query = "INSERT INTO book" + "(name,page,writer,category) VALUES " + "(?,?,?,?)";
 		boolean key = false;
@@ -227,7 +229,7 @@ public class PrimeAdmin extends User {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		if (key)
 			return true;
 		else

@@ -11,6 +11,8 @@ import javax.swing.table.DefaultTableModel;
 import Helper.Helper;
 import Model.Book;
 import Model.PrimeAdmin;
+import Model.SubAdmin;
+import View.SubAdminGUI;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -31,6 +33,7 @@ public class AddBookGUI extends JFrame {
 	private JTextField fld_bPage;
 	private Book book = new Book();
 	PrimeAdmin primeadmin = new PrimeAdmin();
+	SubAdmin sadm = new SubAdmin();
 	String[] bookCategory = { "Bilim-Kurgu", "Macera", "Polisiye"};
 
 	/**

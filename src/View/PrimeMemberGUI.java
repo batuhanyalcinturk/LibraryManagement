@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import Model.Member;
+import Model.PrimeMember;
 
 import java.awt.Color;
 import javax.swing.JTabbedPane;
@@ -23,9 +23,9 @@ import java.sql.SQLException;
 
 import javax.swing.JTable;
 
-public class MemberGUI extends JFrame {
+public class PrimeMemberGUI extends JFrame {
 	
-	static Member member = new Member();
+	static PrimeMember primember = new PrimeMember();
 
 	private JPanel w_pane;
 	private JTextField fld_bookID;
@@ -40,7 +40,7 @@ public class MemberGUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MemberGUI frame = new MemberGUI(member);
+					PrimeMemberGUI frame = new PrimeMemberGUI(primember);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,21 +53,23 @@ public class MemberGUI extends JFrame {
 	 * Create the frame.
 	 * @throws SQLException 
 	 */
-	public MemberGUI(Member member) throws SQLException {
+	public PrimeMemberGUI(PrimeMember primember) throws SQLException {
 		
 		bookModel = new DefaultTableModel();
-		Object[] colBookName = new Object[4];
-		colBookName[0] = "Kitap Ýsmi";
-		colBookName[1] = "Sayfa Sayýsý";
-		colBookName[2] = "Yazar";
-		colBookName[3] = "Kategori";
+		Object[] colBookName = new Object[5];
+		colBookName[0] = "ID";
+		colBookName[1] = "Kitap Ýsmi";
+		colBookName[2] = "Sayfa Sayýsý";
+		colBookName[3] = "Yazar";
+		colBookName[4] = "Kategori";
 		bookModel.setColumnIdentifiers(colBookName);
-		bookData = new Object[4];
-		for (int i = 0; i < member.getBookList().size(); i++) {
-			bookData[0] = member.getBookList().get(i).getName();
-			bookData[1] = member.getBookList().get(i).getPage();
-			bookData[2] = member.getBookList().get(i).getWriter();
-			bookData[3] = member.getBookList().get(i).getCategory();
+		bookData = new Object[5];
+		for (int i = 0; i < primember.getBookList().size(); i++) {
+			bookData[0] = primember.getBookList().get(i).getId();
+			bookData[1] = primember.getBookList().get(i).getName();
+			bookData[2] = primember.getBookList().get(i).getPage();
+			bookData[3] = primember.getBookList().get(i).getWriter();
+			bookData[4] = primember.getBookList().get(i).getCategory();
 			bookModel.addRow(bookData);
 		}
 		
@@ -100,6 +102,11 @@ public class MemberGUI extends JFrame {
 		table_book = new JTable(bookModel);
 		w_scrollBook.setViewportView(table_book);
 		
+		JButton btn_delBook = new JButton("Kitabý Sil");
+		btn_delBook.setBounds(869, 387, 149, 40);
+		btn_delBook.setFont(new Font("SansSerif", Font.PLAIN, 15));
+		book_tab.add(btn_delBook);
+		
 		fld_bookID = new JTextField();
 		fld_bookID.setBounds(869, 333, 149, 30);
 		fld_bookID.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -112,7 +119,7 @@ public class MemberGUI extends JFrame {
 		lbl_bookID.setFont(new Font("SansSerif", Font.PLAIN, 15));
 		book_tab.add(lbl_bookID);
 		
-		JLabel lbl_WelcomePrimeAdmin = new JLabel("Hosgeldiniz Sayýn " + member.getName() +" "+ member.getSurname());
+		JLabel lbl_WelcomePrimeAdmin = new JLabel("Hosgeldiniz Sayýn " + primember.getName());
 		lbl_WelcomePrimeAdmin.setFont(new Font("SansSerif", Font.PLAIN, 15));
 		lbl_WelcomePrimeAdmin.setBounds(10, 20, 500, 20);
 		contentPane_1.add(lbl_WelcomePrimeAdmin);
