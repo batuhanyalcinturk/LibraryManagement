@@ -1,6 +1,5 @@
 package View;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -29,6 +28,10 @@ import java.awt.event.ActionEvent;
 
 public class LoginGUI extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel w_pane;
 	private JTextField fld_userTc;
 	private JPasswordField fld_userPass;
@@ -115,6 +118,7 @@ public class LoginGUI extends JFrame {
 
 		JButton btn_Login = new JButton("Giriþ Yap");
 		btn_Login.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
@@ -128,15 +132,33 @@ public class LoginGUI extends JFrame {
 						while (rs.next()) {
 							if (fld_userTc.getText().equals(rs.getString("tcno"))
 									&& fld_userPass.getText().equals(rs.getString("password"))) {
-								Member memb = new Member();
-								memb.setId(rs.getInt("id"));
-								memb.setPassword("password");
-								memb.setTcno(rs.getString("tcno"));
-								memb.setName(rs.getString("name"));
-								memb.setType(rs.getString("type"));
-								MemberGUI membGUI = new MemberGUI(memb);
-								membGUI.setVisible(true);
-								dispose();
+								if(rs.getString("type").equals("member")) {
+									Member memb = new Member();
+									memb.setId(rs.getInt("id"));
+									memb.setPassword("password");
+									memb.setTcno(rs.getString("tcno"));
+									memb.setName(rs.getString("name"));
+									memb.setType(rs.getString("type"));
+									MemberGUI membGUI = new MemberGUI(memb);
+									membGUI.setVisible(true);
+									dispose();
+								}
+								if (fld_userTc.getText().equals(rs.getString("tcno"))
+										&& fld_userPass.getText().equals(rs.getString("password"))) {
+									if(rs.getString("type").equals("primemember")) {
+										PrimeMember pmemb = new PrimeMember();
+										pmemb.setId(rs.getInt("id"));
+										pmemb.setPassword("password");
+										pmemb.setTcno(rs.getString("tcno"));
+										pmemb.setName(rs.getString("name"));
+										pmemb.setType(rs.getString("type"));
+										PrimeMemberGUI pmembGUI = new PrimeMemberGUI(pmemb);
+										pmembGUI.setVisible(true);
+										dispose();
+									}
+									
+								}
+								
 							}
 						}
 					} catch (SQLException e1) {
@@ -187,6 +209,7 @@ public class LoginGUI extends JFrame {
 
 		JButton btn_Login_1 = new JButton("Giris Yap");
 		btn_Login_1.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public void actionPerformed(ActionEvent e) {
 

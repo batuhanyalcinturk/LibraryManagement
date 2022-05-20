@@ -149,7 +149,8 @@ public class PrimeAdmin extends User {
 
 	}
 
-	public boolean updMember(int id, String tcno, String password, String name, String surname, String type) throws SQLException {
+	public boolean updMember(int id, String tcno, String password, String name, String surname, String type)
+			throws SQLException {
 		String query = "UPDATE register SET name = ?, surname = ?, tcno = ?, password = ?, type = ? WHERE id = ?";
 		boolean key = false;
 		try {
@@ -183,7 +184,7 @@ public class PrimeAdmin extends User {
 			rs = st.executeQuery("SELECT * FROM book");
 			while (rs.next()) {
 				obj = new Book(rs.getInt("id"), rs.getString("name"), rs.getString("page"), rs.getString("writer"),
-						rs.getString("category"));
+						rs.getString("category"), rs.getString("info"));
 				list.add(obj);
 			}
 		} catch (SQLException e) {
@@ -194,8 +195,28 @@ public class PrimeAdmin extends User {
 
 	}
 
-	public boolean addBook(String name, String page, String writer, String category) throws SQLException {
-		String query = "INSERT INTO book" + "(name,page,writer,category) VALUES " + "(?,?,?,?)";
+	public ArrayList<Book> getConfirmBookList() throws SQLException {
+		ArrayList<Book> list = new ArrayList<>();
+		Book obj;
+
+		try {
+			st = con.createStatement();
+			rs = st.executeQuery("SELECT * FROM memberbook");
+			while (rs.next()) {
+				obj = new Book(rs.getInt("id"), rs.getString("name"), rs.getString("page"), rs.getString("writer"),
+						rs.getString("category"), rs.getString("info"));
+				list.add(obj);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return list;
+
+	}
+
+	public boolean addBook(String name, String page, String writer, Object category, String info) throws SQLException {
+		String query = "INSERT INTO book" + "(name,page,writer,category,info) VALUES " + "(?,?,?,?,?)";
 		boolean key = false;
 		try {
 			st = con.createStatement();
@@ -203,7 +224,8 @@ public class PrimeAdmin extends User {
 			preparedStatement.setString(1, name);
 			preparedStatement.setString(2, page);
 			preparedStatement.setString(3, writer);
-			preparedStatement.setString(4, category);
+			preparedStatement.setObject(4, category);
+			preparedStatement.setString(5, info);
 			preparedStatement.executeUpdate();
 			key = true;
 		} catch (Exception e) {
@@ -229,7 +251,7 @@ public class PrimeAdmin extends User {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		if (key)
 			return true;
 		else
@@ -237,8 +259,29 @@ public class PrimeAdmin extends User {
 
 	}
 
-	public boolean updBook(int id, String name, String page, String writer, Object category) throws SQLException {
-		String query = "UPDATE book SET name = ?, page = ?, writer = ?, category = ? WHERE id = ?";
+	public boolean rejectBook(int id) throws SQLException {
+		String query = "DELETE FROM memberbook WHERE id = ?";
+		boolean key = false;
+		try {
+			st = con.createStatement();
+			preparedStatement = con.prepareStatement(query);
+			preparedStatement.setInt(1, id);
+			preparedStatement.executeUpdate();
+			key = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (key)
+			return true;
+		else
+			return false;
+
+	}
+
+	public boolean updBook(int id, String name, String page, String writer, Object category, String info)
+			throws SQLException {
+		String query = "UPDATE book SET name = ?, page = ?, writer = ?, category = ?, info = ? WHERE id = ?";
 		boolean key = false;
 		try {
 			st = con.createStatement();
@@ -247,7 +290,8 @@ public class PrimeAdmin extends User {
 			preparedStatement.setString(2, page);
 			preparedStatement.setString(3, writer);
 			preparedStatement.setObject(4, category);
-			preparedStatement.setInt(5, id);
+			preparedStatement.setString(5, info);
+			preparedStatement.setInt(6, id);
 			preparedStatement.executeUpdate();
 			key = true;
 		} catch (Exception e) {

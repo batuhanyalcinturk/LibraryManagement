@@ -1,6 +1,5 @@
 package View;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -32,8 +31,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import javax.swing.JComboBox;
+import javax.swing.JTextArea;
+import javax.swing.DefaultComboBoxModel;
 
 public class PrimeAdminGUI extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	static PrimeAdmin primeadmin = new PrimeAdmin();
 
@@ -54,6 +60,15 @@ public class PrimeAdminGUI extends JFrame {
 	private JTextField fld_bookID;
 	private DefaultTableModel bookModel = null;
 	private Object[] bookData = null;
+	private DefaultTableModel confBookModel = null;
+	private Object[] confBookData = null;
+	private JTextField fld_bName;
+	private JTextField fld_bWriter;
+	private JTextField fld_bPage;
+	private Book book = new Book();
+	String[] bookCategory = { "Bilim-Kurgu", "Macera", "Roman", "Hikaye", "Biyografi"};
+	private JTextField fld_confBookID;
+	private JTable table_confbook;
 
 	/**
 	 * Launch the application.
@@ -76,6 +91,7 @@ public class PrimeAdminGUI extends JFrame {
 	 * 
 	 * @throws SQLException
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public PrimeAdminGUI(PrimeAdmin primeadmin) throws SQLException {
 
 		adminModel = new DefaultTableModel();
@@ -117,21 +133,43 @@ public class PrimeAdminGUI extends JFrame {
 		}
 
 		bookModel = new DefaultTableModel();
-		Object[] colBookName = new Object[5];
+		Object[] colBookName = new Object[6];
 		colBookName[0] = "ID";
 		colBookName[1] = "Kitap Ýsmi";
 		colBookName[2] = "Sayfa Sayýsý";
 		colBookName[3] = "Yazar";
 		colBookName[4] = "Kategori";
+		colBookName[5] = "Ýçerik";
 		bookModel.setColumnIdentifiers(colBookName);
-		bookData = new Object[5];
+		bookData = new Object[6];
 		for (int i = 0; i < primeadmin.getBookList().size(); i++) {
 			bookData[0] = primeadmin.getBookList().get(i).getId();
 			bookData[1] = primeadmin.getBookList().get(i).getName();
 			bookData[2] = primeadmin.getBookList().get(i).getPage();
 			bookData[3] = primeadmin.getBookList().get(i).getWriter();
 			bookData[4] = primeadmin.getBookList().get(i).getCategory();
+			bookData[5] = primeadmin.getBookList().get(i).getInfo();
 			bookModel.addRow(bookData);
+		}
+
+		confBookModel = new DefaultTableModel();
+		Object[] colConfBookName = new Object[6];
+		colConfBookName[0] = "ID";
+		colConfBookName[1] = "Kitap Ýsmi";
+		colConfBookName[2] = "Sayfa Sayýsý";
+		colConfBookName[3] = "Yazar";
+		colConfBookName[4] = "Kategori";
+		colConfBookName[5] = "Ýçerik";
+		confBookModel.setColumnIdentifiers(colBookName);
+		confBookData = new Object[6];
+		for (int i = 0; i < primeadmin.getConfirmBookList().size(); i++) {
+			confBookData[0] = primeadmin.getConfirmBookList().get(i).getId();
+			confBookData[1] = primeadmin.getConfirmBookList().get(i).getName();
+			confBookData[2] = primeadmin.getConfirmBookList().get(i).getPage();
+			confBookData[3] = primeadmin.getConfirmBookList().get(i).getWriter();
+			confBookData[4] = primeadmin.getConfirmBookList().get(i).getCategory();
+			confBookData[5] = primeadmin.getConfirmBookList().get(i).getInfo();
+			confBookModel.addRow(confBookData);
 		}
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -428,7 +466,7 @@ public class PrimeAdminGUI extends JFrame {
 		book_tab.setLayout(null);
 
 		JScrollPane w_scrollBook = new JScrollPane();
-		w_scrollBook.setBounds(0, 0, 847, 427);
+		w_scrollBook.setBounds(0, 0, 800, 363);
 		book_tab.add(w_scrollBook);
 
 		table_book = new JTable(bookModel);
@@ -438,7 +476,7 @@ public class PrimeAdminGUI extends JFrame {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				try {
-					fld_bookID.setText(table_book.getValueAt(table_book.getSelectedRow(), 1).toString());
+					fld_bookID.setText(table_book.getValueAt(table_book.getSelectedRow(), 0).toString());
 				} catch (Exception ex) {
 				}
 			}
@@ -455,10 +493,11 @@ public class PrimeAdminGUI extends JFrame {
 					String selectPage = table_book.getValueAt(table_book.getSelectedRow(), 2).toString();
 					String selectWriter = table_book.getValueAt(table_book.getSelectedRow(), 3).toString();
 					String selectCategory = table_book.getValueAt(table_book.getSelectedRow(), 4).toString();
+					String selectInfo = table_book.getValueAt(table_book.getSelectedRow(), 5).toString();
 
 					try {
 						boolean control = primeadmin.updBook(selectID, selectName, selectPage, selectWriter,
-								selectCategory);
+								selectCategory, selectInfo);
 						if (control) {
 							updateBookModel();
 							Helper.showMsg("success");
@@ -498,31 +537,251 @@ public class PrimeAdminGUI extends JFrame {
 
 		});
 		btn_delBook.setFont(new Font("SansSerif", Font.PLAIN, 15));
-		btn_delBook.setBounds(869, 387, 149, 40);
+		btn_delBook.setBounds(440, 380, 149, 40);
 		book_tab.add(btn_delBook);
 
 		fld_bookID = new JTextField();
 		fld_bookID.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		fld_bookID.setEditable(false);
 		fld_bookID.setColumns(10);
-		fld_bookID.setBounds(869, 333, 149, 30);
+		fld_bookID.setBounds(127, 386, 275, 30);
 		book_tab.add(fld_bookID);
 
-		Label lbl_bookID = new Label("ID:");
+		Label lbl_bookID = new Label("Kitap Id:");
 		lbl_bookID.setFont(new Font("SansSerif", Font.PLAIN, 15));
-		lbl_bookID.setBounds(869, 296, 40, 30);
+		lbl_bookID.setBounds(10, 386, 111, 30);
 		book_tab.add(lbl_bookID);
 
-		JButton btn_addBook = new JButton("Kitap Ekle");
-		btn_addBook.addActionListener(new ActionListener() {
+		JLabel lbl_bookInfo = new JLabel("Kitap Hakk\u0131nda Bilgi:");
+		lbl_bookInfo.setFont(new Font("SansSerif", Font.PLAIN, 15));
+		lbl_bookInfo.setBounds(810, 0, 208, 30);
+		book_tab.add(lbl_bookInfo);
+
+		JTextArea txtar_bInfo = new JTextArea();
+		txtar_bInfo.setWrapStyleWord(true);
+		txtar_bInfo.setLineWrap(true);
+		txtar_bInfo.setBounds(810, 40, 208, 313);
+		book_tab.add(txtar_bInfo);
+		table_book.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				try {
+					txtar_bInfo.setText(table_book.getValueAt(table_book.getSelectedRow(), 5).toString());
+				} catch (Exception ex) {
+				}
+			}
+
+		});
+
+		JPanel addbook_tab = new JPanel();
+		w_tab.addTab("Kitap Ekle", null, addbook_tab, null);
+		addbook_tab.setLayout(null);
+
+		JLabel lbl_bName = new JLabel("Kitap Ad\u0131:");
+		lbl_bName.setFont(new Font("SansSerif", Font.PLAIN, 15));
+		lbl_bName.setBounds(321, 27, 97, 31);
+		addbook_tab.add(lbl_bName);
+
+		fld_bName = new JTextField();
+		fld_bName.setColumns(10);
+		fld_bName.setBounds(417, 27, 220, 33);
+		addbook_tab.add(fld_bName);
+
+		JLabel lbl_bWriter = new JLabel("Yazar Ad\u0131:");
+		lbl_bWriter.setFont(new Font("SansSerif", Font.PLAIN, 15));
+		lbl_bWriter.setBounds(321, 70, 97, 31);
+		addbook_tab.add(lbl_bWriter);
+
+		fld_bWriter = new JTextField();
+		fld_bWriter.setColumns(10);
+		fld_bWriter.setBounds(417, 70, 220, 33);
+		addbook_tab.add(fld_bWriter);
+
+		JLabel lbl_bPage = new JLabel("Sayfa Say\u0131s\u0131:");
+		lbl_bPage.setFont(new Font("SansSerif", Font.PLAIN, 15));
+		lbl_bPage.setBounds(321, 113, 97, 31);
+		addbook_tab.add(lbl_bPage);
+
+		fld_bPage = new JTextField();
+		fld_bPage.setColumns(10);
+		fld_bPage.setBounds(417, 113, 220, 33);
+		addbook_tab.add(fld_bPage);
+
+		JLabel lbl_bCategory = new JLabel("Kategori:");
+		lbl_bCategory.setFont(new Font("SansSerif", Font.PLAIN, 15));
+		lbl_bCategory.setBounds(321, 156, 97, 31);
+		addbook_tab.add(lbl_bCategory);
+
+		JComboBox cmb_bCategory = new JComboBox(bookCategory);
+		cmb_bCategory.setModel(new DefaultComboBoxModel(new String[] {"Bilim-Kurgu", "Macera", "Roman", "Hikaye", "Biyografi"}));
+		cmb_bCategory.setBackground(Color.WHITE);
+		cmb_bCategory.setBounds(417, 156, 220, 33);
+		addbook_tab.add(cmb_bCategory);
+
+		JLabel lbl_bInfo = new JLabel("\u0130\u00E7erik:");
+		lbl_bInfo.setFont(new Font("SansSerif", Font.PLAIN, 15));
+		lbl_bInfo.setBounds(321, 212, 97, 31);
+		addbook_tab.add(lbl_bInfo);
+
+		JTextArea txtarea_bInfo = new JTextArea();
+		txtarea_bInfo.setWrapStyleWord(true);
+		txtarea_bInfo.setLineWrap(true);
+		txtarea_bInfo.setBounds(417, 212, 220, 173);
+		addbook_tab.add(txtarea_bInfo);
+
+		JButton btn_bAdd = new JButton("Ekle");
+		btn_bAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				AddBookGUI abGUI = new AddBookGUI();
-				abGUI.setVisible(true);
+				if (fld_bName.getText().length() == 0 || fld_bWriter.getText().length() == 0
+						|| fld_bPage.getText().length() == 0 || cmb_bCategory.getSelectedItem().toString().length() == 0
+						|| txtarea_bInfo.getText().length() == 0) {
+					Helper.showMsg("fill");
+				} else {
+					try {
+						boolean control = book.addBook(fld_bName.getText(), fld_bPage.getText(), fld_bWriter.getText(),
+								cmb_bCategory.getSelectedItem(), txtarea_bInfo.getText());
+						if (control) {
+							updateBookModel();
+							Helper.showMsg("success");
+						} else {
+							Helper.showMsg("error");
+						}
+
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+
 			}
 		});
-		btn_addBook.setFont(new Font("SansSerif", Font.PLAIN, 15));
-		btn_addBook.setBounds(869, 10, 149, 40);
-		book_tab.add(btn_addBook);
+		btn_bAdd.setFont(new Font("SansSerif", Font.PLAIN, 17));
+		btn_bAdd.setBounds(417, 395, 133, 33);
+		addbook_tab.add(btn_bAdd);
+
+		JPanel confirmbook_tab = new JPanel();
+		confirmbook_tab.setLayout(null);
+		w_tab.addTab("Kitap Onaylama", null, confirmbook_tab, null);
+
+		JScrollPane w_scrollConfBook = new JScrollPane();
+		w_scrollConfBook.setBounds(0, 0, 800, 363);
+		confirmbook_tab.add(w_scrollConfBook);
+
+		table_confbook = new JTable(confBookModel);
+		w_scrollConfBook.setViewportView(table_confbook);
+		table_confbook.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				try {
+					fld_confBookID.setText(table_confbook.getValueAt(table_confbook.getSelectedRow(), 0).toString());
+				} catch (Exception ex) {
+				}
+			}
+
+		});
+
+		JButton btn_rejBook = new JButton("Kitabý Reddet");
+		btn_rejBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (fld_confBookID.getText().length() == 0) {
+					Helper.showMsg("Lütfen Geçerli Bir Kitap Seçiniz! ");
+				} else {
+					if (Helper.confirm("sure")) {
+						int selectID = Integer.parseInt(fld_confBookID.getText());
+						try {
+							boolean control = primeadmin.rejectBook(selectID);
+							if (control) {
+								Helper.showMsg("success");
+								fld_bookID.setText(null);
+								updateConfBookModel();
+							}
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				}
+			}
+		});
+		btn_rejBook.setFont(new Font("SansSerif", Font.PLAIN, 15));
+		btn_rejBook.setBounds(600, 380, 149, 40);
+		confirmbook_tab.add(btn_rejBook);
+
+		fld_confBookID = new JTextField();
+		fld_confBookID.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		fld_confBookID.setEditable(false);
+		fld_confBookID.setColumns(10);
+		fld_confBookID.setBounds(127, 386, 275, 30);
+		confirmbook_tab.add(fld_confBookID);
+
+		Label lbl_confBookID = new Label("Kitap Id:");
+		lbl_confBookID.setFont(new Font("SansSerif", Font.PLAIN, 15));
+		lbl_confBookID.setBounds(10, 386, 111, 30);
+		confirmbook_tab.add(lbl_confBookID);
+
+		JLabel lbl_confBookInfo = new JLabel("Kitap Hakkýnda Bilgi:");
+		lbl_confBookInfo.setFont(new Font("SansSerif", Font.PLAIN, 15));
+		lbl_confBookInfo.setBounds(810, 0, 208, 30);
+		confirmbook_tab.add(lbl_confBookInfo);
+
+		JTextArea txtar_conBoInfo = new JTextArea();
+		txtar_conBoInfo.setWrapStyleWord(true);
+		txtar_conBoInfo.setLineWrap(true);
+		txtar_conBoInfo.setBounds(810, 40, 208, 313);
+		confirmbook_tab.add(txtar_conBoInfo);
+		table_confbook.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				try {
+					txtar_conBoInfo.setText(table_confbook.getValueAt(table_confbook.getSelectedRow(), 5).toString());
+				} catch (Exception ex) {
+				}
+			}
+
+		});
+		
+		
+		JButton btn_confBook = new JButton("Kitabý Onayla");
+		btn_confBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if ((table_confbook.getValueAt(table_confbook.getSelectedRow(), 1)).toString().length() == 0
+						|| (table_confbook.getValueAt(table_confbook.getSelectedRow(), 2)).toString().length() == 0
+						|| (table_confbook.getValueAt(table_confbook.getSelectedRow(), 3)).toString().length() == 0
+						|| (table_confbook.getValueAt(table_confbook.getSelectedRow(), 4)).toString().length() == 0
+						|| (table_confbook.getValueAt(table_confbook.getSelectedRow(), 5)).toString().length() == 0) {
+					Helper.showMsg("fill");
+				} else {
+					try {
+						boolean control = book.addBook(
+								(table_confbook.getValueAt(table_confbook.getSelectedRow(), 1).toString()),
+								(table_confbook.getValueAt(table_confbook.getSelectedRow(), 2).toString()),
+								(table_confbook.getValueAt(table_confbook.getSelectedRow(), 3).toString()),
+								(table_confbook.getValueAt(table_confbook.getSelectedRow(), 4)),
+								(table_confbook.getValueAt(table_confbook.getSelectedRow(), 5).toString()));
+						if (control) {
+							updateBookModel();
+							int selectID = Integer.parseInt(fld_confBookID.getText());
+							Helper.showMsg("success");
+							primeadmin.rejectBook(selectID);
+							updateConfBookModel();
+
+						} else {
+							Helper.showMsg("error");
+						}
+
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		btn_confBook.setFont(new Font("SansSerif", Font.PLAIN, 15));
+		btn_confBook.setBounds(440, 380, 139, 40);
+		confirmbook_tab.add(btn_confBook);
 
 		JLabel lbl_WelcomePrimeAdmin = new JLabel("Hosgeldiniz Sayýn " + primeadmin.getName());
 		lbl_WelcomePrimeAdmin.setBounds(144, 20, 366, 20);
@@ -543,7 +802,7 @@ public class PrimeAdminGUI extends JFrame {
 		btn_Exit.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		btn_Exit.setBackground(Color.CYAN);
 		contentPane_1.add(btn_Exit);
-		
+
 		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setIcon(new ImageIcon(PrimeAdminGUI.class.getResource("/Images/admin.png")));
 		lblNewLabel.setBounds(10, 10, 64, 64);
@@ -586,7 +845,23 @@ public class PrimeAdminGUI extends JFrame {
 			bookData[2] = primeadmin.getBookList().get(i).getPage();
 			bookData[3] = primeadmin.getBookList().get(i).getWriter();
 			bookData[4] = primeadmin.getBookList().get(i).getCategory();
+			bookData[5] = primeadmin.getBookList().get(i).getInfo();
 			bookModel.addRow(bookData);
 		}
 	}
+	
+	public void updateConfBookModel() throws SQLException {
+		DefaultTableModel clearModel = (DefaultTableModel) table_confbook.getModel();
+		clearModel.setRowCount(0);
+		for (int i = 0; i < primeadmin.getConfirmBookList().size(); i++) {
+			confBookData[0] = primeadmin.getConfirmBookList().get(i).getId();
+			confBookData[1] = primeadmin.getConfirmBookList().get(i).getName();
+			confBookData[2] = primeadmin.getConfirmBookList().get(i).getPage();
+			confBookData[3] = primeadmin.getConfirmBookList().get(i).getWriter();
+			confBookData[4] = primeadmin.getConfirmBookList().get(i).getCategory();
+			confBookData[5] = primeadmin.getConfirmBookList().get(i).getInfo();
+			confBookModel.addRow(confBookData);
+		}
+	}
+	
 }

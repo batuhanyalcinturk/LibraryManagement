@@ -1,6 +1,5 @@
 package View;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -9,8 +8,6 @@ import javax.swing.border.EmptyBorder;
 
 import Helper.Helper;
 import Model.Member;
-import Model.User;
-
 import java.awt.Color;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -23,6 +20,10 @@ import java.awt.event.ActionEvent;
 
 public class RegisterGUI extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel w_pane;
 	private JTextField fld_name;
 	private JTextField fld_surname;
@@ -93,6 +94,7 @@ public class RegisterGUI extends JFrame {
 
 		JButton btn_register = new JButton("Kayýt Ol");
 		btn_register.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
 			public void actionPerformed(ActionEvent e) {
 				if (fld_tcno.getText().length() == 0 || fld_pass.getText().length() == 0
 						|| fld_name.getText().length() == 0 || fld_surname.getText().length() == 0) {

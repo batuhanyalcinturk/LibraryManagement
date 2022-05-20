@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="Cp1254" standalone="no"?>
+<jardesc>
+    <jar path="D:/Coding/deneme/library.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/LibraryManagement/JarBuild.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" mainClassHandleIdentifier="=LibraryManagement/src&lt;View{LoginGUI.java[LoginGUI" manifestLocation="/LibraryManagement/manifest" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <file path="/LibraryManagement/JarBuild.jardesc"/>
+        <file path="/LibraryManagement/.classpath"/>
+        <file path="/LibraryManagement/.gitignore"/>
+        <file path="/LibraryManagement/manifest"/>
+        <file path="/LibraryManagement/.gitattributes"/>
+        <file path="/LibraryManagement/.project"/>
+        <javaElement handleIdentifier="=LibraryManagement/src"/>
+    </selectedElements>
+</jardesc>
